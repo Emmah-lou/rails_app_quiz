@@ -8,16 +8,43 @@ class JobsController < ApplicationController
     @job = Job.find(params[:id])
     render 'jobs/show'
   end
-  
   def create
-    @job = Job.create(url: params[:url], employer_name: params[:employer_name], employer_description: params[:employer_description], job_title: params[:job_title], job_description: params[:job_description], years_of_experience: params[:years_of_experience], education_requirement: params[:education_requirement], industry: params[:industry], base_salary: params[:base_salary], employment_type_id: params[:employment_type_id], created_at: params[:created_at], updated_at: params[:updated_at])
-    if @job && @job.save
+    @job = Job.new(job_params)
+  
+    if @job.save
       render 'jobs/create'
     else
       render json: @job.errors
     end
   end
+  def destroy
+    @job = Job.find(params[:id])
+    if @job == nil
+      render json: { error: "Job not found" }, status: :not_found
+    else
+      @job.destroy
+      render json: { message: "Job deleted" }
+    end
+  end
 
- 
+  
+  private
+  
+  def job_params
+    params.permit(
+      :url,
+      :employer_name,
+      :employer_description,
+      :job_title,
+      :job_description,
+      :years_of_experience,
+      :education_requirement,
+      :industry,
+      :base_salary,
+      :employment_type_id,
+      :created_at,
+      :updated_at
+    )
+  end
 
 end
